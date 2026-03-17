@@ -1,0 +1,10 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# runner = "elf2flash -d -s -t --family 0xe48bff59"
+runner = "sudo picotool load -u -v -x -t elf"
+# runner = "probe-rs run --chip RP2040"
+
+[build]
+target = "thumbv8m.main-none-eabihf" # Cortex-M0 and Cortex-M0+
+
+[env]
+DEFMT_LOG = "debug"
