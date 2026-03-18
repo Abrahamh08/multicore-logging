@@ -12,6 +12,7 @@ use embassy_rp::bind_interrupts;
 use embassy_rp::multicore::{spawn_core1, Stack};
 use embassy_rp::peripherals::USB;
 use embassy_rp::usb::{Driver, Instance, InterruptHandler};
+use embassy_time::Timer;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::driver::EndpointError;
 use embassy_usb::{Builder, Config};
@@ -59,7 +60,8 @@ fn main() -> ! {
 #[embassy_executor::task]
 async fn core1_task() {
     loop {
-        info!("from core1!")
+        info!("from core1!");
+        Timer::after_millis(1).await;
     }
 }
 
