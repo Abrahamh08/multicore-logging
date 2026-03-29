@@ -11,6 +11,7 @@ use embassy_futures::join::join;
 use embassy_rp::bind_interrupts;
 use embassy_rp::multicore::{spawn_core1, Stack};
 use embassy_rp::peripherals::USB;
+use embassy_rp::Peri;
 use embassy_rp::usb::{Driver, Instance, InterruptHandler};
 use embassy_time::Timer;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
@@ -54,7 +55,7 @@ fn main() -> ! {
     );
 
     let executor0 = EXECUTOR0.init(Executor::new());
-    executor0.run(|spawner| spawner.spawn(unwrap!(core0_task())));
+    executor0.run(|spawner| spawner.spawn(unwrap!(core0_task(p.USB))));
 }
 
 #[embassy_executor::task]
@@ -66,13 +67,11 @@ async fn core1_task() {
 }
 
 #[embassy_executor::task]
-async fn core0_task() {
+async fn core0_task(usb: Peri<'static, USB>) {
     info!("Hello there!");
 
-    let p = embassy_rp::init(Default::default());
-
     // Create the driver, from the HAL.
-    let driver = Driver::new(p.USB, Irqs);
+    let driver = Driver::new(usb, Irqs);
 
     // Create embassy-usb Config
     let mut config = Config::new(0xc0de, 0xcafe);
